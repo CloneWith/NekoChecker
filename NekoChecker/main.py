@@ -60,6 +60,9 @@ def main_loop(path: str):
             raise AnsweringBannedException(left)
 
         print_and_log(f"[{q.id}] {q.description}", "info", __name__)
+        if q.format is not None:
+            print_and_log(f"格式：{q.format}", "info", __name__)
+
         try:
             user_ans = input(bold("Answer > "))
         except KeyboardInterrupt:
@@ -113,6 +116,9 @@ def main_loop(path: str):
         for q in ps.questions:
             status = bold(tint("[✔]", "green")) if q.solved else bold(tint("[-]", "yellow"))
             print_and_log(f"{status} {q.id}. {q.description}", "info", __name__)
+            
+            if q.format is not None:
+                print_and_log(f"{bold(tint('[.]', 'blue'))} 格式：{q.format}", "info", __name__)
 
     def answer_question(ps_idx: int, q_idx: int):
         ps = get_problem_set(ps_idx)
