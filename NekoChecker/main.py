@@ -63,6 +63,7 @@ def main_loop(path: str):
         try:
             user_ans = input(bold("Answer > "))
         except KeyboardInterrupt:
+            print()
             return False
         # 格式校验
         if getattr(q, "format_re", None):
@@ -127,6 +128,7 @@ def main_loop(path: str):
         try:
             cmd = input(f"{bold(tint('NekoChecker', 'blue'))} > ").strip()
         except KeyboardInterrupt:
+            print()
             print_and_log("退出 NekoChecker...", "info", __name__)
             break
 
