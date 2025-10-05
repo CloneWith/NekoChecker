@@ -17,6 +17,7 @@ NekoChecker 交互命令帮助：
     flag [题库编号]            获取题库 Flag
     save                      保存进度
     help                      显示本帮助信息
+    about                     显示关于信息
     exit                      退出程序
 '''
     print(help_text)

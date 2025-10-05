@@ -3,7 +3,7 @@ import os
 from NekoChecker.models.config import Config
 from NekoChecker.models.exceptions import AnsweringBannedException
 from NekoChecker.utils import tint, bold
-from NekoChecker.utils.docs import display_help
+from NekoChecker.utils.docs import display_help, print_version
 from NekoChecker.utils.cli import print_and_log, exit_with_code
 
 
@@ -59,7 +59,7 @@ def main_loop(path: str):
             left = int(q.banned_until - time.time())
             raise AnsweringBannedException(left)
 
-        print_and_log(f"{q.id}{q.description}", "info", __name__)
+        print_and_log(f"[{q.id}] {q.description}", "info", __name__)
         try:
             user_ans = input(bold("Answer > "))
         except KeyboardInterrupt:
@@ -171,6 +171,8 @@ def main_loop(path: str):
                 print_and_log("用法: start <题组编号>", "error", __name__)
         elif cmd == "help":
             display_help()
+        elif cmd == "about":
+            print_version()
         elif cmd == "exit":
             save_config_to_file()
             print_and_log("退出 NekoChecker...", "info", __name__)
