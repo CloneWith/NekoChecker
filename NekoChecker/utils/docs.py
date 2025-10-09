@@ -1,3 +1,5 @@
+"""Some constant strings and utilities for documents."""
+
 import NekoChecker
 from NekoChecker.utils import bold, tint
 
@@ -19,12 +21,8 @@ NekoChecker 交互命令帮助：
     save                      保存进度
     help                      显示本帮助信息
     about                     显示关于信息
-    exit                      退出程序
-'''
+    exit                      退出程序'''
     print(help_text)
-
-
-"""Some constant strings and utilities for documents."""
 
 
 def print_version():
@@ -36,6 +34,5 @@ def print_version():
     print(
         f"""{bold(tint('NekoChecker', 'blue'))} version {NekoChecker.__version__}
 By {" & ".join(NekoChecker.__authors__)}, licensed under {NekoChecker.__license__}
-{DESCRIPTION}
-"""
+{DESCRIPTION}"""
     )

@@ -7,8 +7,8 @@ from NekoChecker.utils import tint, bold
 from NekoChecker.utils.docs import display_help, print_version
 from NekoChecker.utils.cli import print_and_log, exit_with_code
 
-
 current_set: ProblemSet | None = None
+
 
 def load_config(json_path: str) -> Config:
     if not os.path.exists(json_path):
@@ -73,11 +73,11 @@ def main_loop(path: str):
         except KeyboardInterrupt:
             print()
             return False
-        
+
         # 输入为空时跳过
         if user_ans.strip() == "":
             return True
-        
+
         # 格式校验
         if getattr(q, "format_re", None):
             import re
@@ -98,7 +98,7 @@ def main_loop(path: str):
         ps = get_problem_set(ps_idx)
         if ps is None:
             return
-        
+
         if ps.all_solved():
             print_and_log("已解决本题组中的所有问题！", "info", __name__)
             return
@@ -121,7 +121,7 @@ def main_loop(path: str):
     print_and_log(f"欢迎来到 {bold(tint(config.name, 'blue'))}！目前有 {len(config.problem_sets)} 个题组。", "info",
                   __name__)
     print_and_log(f"初来乍到，输入 {bold(tint('help', 'blue'))} 获取使用帮助。", "info", __name__)
-    
+
     def switch_to_set(idx: int):
         global current_set
         ps = get_problem_set(idx)
@@ -139,7 +139,7 @@ def main_loop(path: str):
         for q in ps.questions:
             status = bold(tint("[✔]", "green")) if q.solved else bold(tint("[-]", "yellow"))
             print_and_log(f"{status} {q.id}. {q.description}", "info", __name__)
-            
+
             if q.format is not None:
                 print_and_log(f"{bold(tint('[.]', 'blue'))} 格式：{q.format}", "info", __name__)
 
@@ -157,7 +157,8 @@ def main_loop(path: str):
 
     while True:
         try:
-            cmd = input(f"{bold(tint('NekoChecker', 'blue'))} [{'/' if current_set is None else current_set.id}] > ").strip()
+            cmd = input(
+                f"{bold(tint('NekoChecker', 'blue'))} [{'/' if current_set is None else current_set.id}] > ").strip()
         except KeyboardInterrupt:
             print()
             save_config_to_file()
@@ -206,7 +207,7 @@ def main_loop(path: str):
         elif cmd == "start":
             if len(problem_sets) == 0:
                 print_and_log("没有可回答的问题！", "warn", __name__)
-                
+
             if current_set is not None:
                 start_answering(current_set.id)
             else:
