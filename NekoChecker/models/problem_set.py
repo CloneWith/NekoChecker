@@ -47,7 +47,13 @@ class ProblemSet(BaseModel):
         return "flag{!!!unknown_type!!!}"
 
     def get_solved_count(self) -> int:
-        return len([q.solved for q in self.questions])
+        total_count = 0
+        
+        for q in self.questions:
+            if q.solved:
+                total_count += 1
+                
+        return total_count
 
     def all_solved(self) -> bool:
         """
