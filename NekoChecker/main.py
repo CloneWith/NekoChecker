@@ -2,10 +2,13 @@ import os
 
 from NekoChecker.models.config import Config
 from NekoChecker.models.exceptions import AnsweringBannedException
+from NekoChecker.models.problem_set import ProblemSet
 from NekoChecker.utils import tint, bold
 from NekoChecker.utils.docs import display_help, print_version
 from NekoChecker.utils.cli import print_and_log, exit_with_code
 
+
+current_set: ProblemSet | None = None
 
 def load_config(json_path: str) -> Config:
     if not os.path.exists(json_path):
@@ -51,9 +54,10 @@ def main_loop(path: str):
                           __name__)
         else:
             if requested:
-                print_and_log("还未完成所有题目，不能获得 Flag...", "wrong_answer", __name__)
+                print_and_log(f"{bold(f'[{ps.id}]')} 还未完成所有题目，不能获得 Flag...", "wrong_answer", __name__)
 
     def answer_logic(q):
+        print()
         if hasattr(q, "is_banned") and q.is_banned():
             import time
             left = int(q.banned_until - time.time())
@@ -64,6 +68,7 @@ def main_loop(path: str):
             print_and_log(f"格式：{q.format}", "info", __name__)
 
         try:
+            print()
             user_ans = input(bold("Answer > "))
         except KeyboardInterrupt:
             print()
@@ -86,8 +91,9 @@ def main_loop(path: str):
 
     def start_answering(ps_idx: int):
         ps = get_problem_set(ps_idx)
-        if ps is None:
+        if ps is None or ps.all_solved():
             return
+
         print_and_log(f"进入题组: {ps.description}", "info", __name__)
         for q_idx, q in enumerate(ps.questions):
             try:
@@ -106,6 +112,14 @@ def main_loop(path: str):
     print_and_log(f"欢迎来到 {bold(tint(config.name, 'blue'))}！目前有 {len(config.problem_sets)} 个题组。", "info",
                   __name__)
     print_and_log(f"初来乍到，输入 {bold(tint('help', 'blue'))} 获取使用帮助。", "info", __name__)
+    
+    def switch_to_set(idx: int):
+        global current_set
+        ps = get_problem_set(idx)
+        if ps is None:
+            return
+        current_set = ps
+        print_and_log(f"转到题组 {bold(tint(f'{ps.description} [{ps.id}]', 'blue'))}...", "info", __name__)
 
     def show_problem_set(idx: int):
         ps = get_problem_set(idx)
@@ -130,9 +144,11 @@ def main_loop(path: str):
         answer_logic(q)
         check_and_display_flag(ps)
 
+    global current_set
+
     while True:
         try:
-            cmd = input(f"{bold(tint('NekoChecker', 'blue'))} > ").strip()
+            cmd = input(f"{bold(tint('NekoChecker', 'blue'))} [{'/' if current_set is None else current_set.id}] > ").strip()
         except KeyboardInterrupt:
             print()
             print_and_log("退出 NekoChecker...", "info", __name__)
@@ -142,12 +158,26 @@ def main_loop(path: str):
             for i, ps in enumerate(problem_sets):
                 print_and_log(f"{bold(f'[{i}]')} {ps.description} ({ps.get_solved_count()}/{len(ps.questions)})",
                               "info", __name__)
+        elif cmd.startswith("cd "):
+            try:
+                idx = int(cmd.split()[1])
+                switch_to_set(idx)
+            except Exception:
+                print_and_log("用法: cd [题组编号]", "error", __name__)
+        elif cmd == "cd":
+            print_and_log("离开题组...", "info")
+            current_set = None
         elif cmd.startswith("show "):
             try:
                 idx = int(cmd.split()[1])
                 show_problem_set(idx)
             except Exception:
                 print_and_log("用法: show <题组编号>", "error", __name__)
+        elif cmd == "show":
+            if current_set is not None:
+                show_problem_set(current_set.id)
+            else:
+                print_and_log("未指定当前题组，请先选择一个。", "warn", __name__)
         elif cmd.startswith("answer "):
             try:
                 parts = cmd.split()
@@ -166,9 +196,14 @@ def main_loop(path: str):
         elif cmd == "start":
             if len(problem_sets) == 0:
                 print_and_log("没有可回答的问题！", "warn", __name__)
+                
+            if current_set is not None:
+                start_answering(current_set.id)
+            else:
+                print_and_log("未指定当前题组，将从头开始回答....", "warn", __name__)
 
-            for i in range(len(problem_sets)):
-                start_answering(i)
+                for i in range(len(problem_sets)):
+                    start_answering(i)
         elif cmd.startswith("start "):
             try:
                 idx = int(cmd.split()[1])

@@ -11,6 +11,7 @@ def display_help():
     help_text = '''
 NekoChecker 交互命令帮助：
     list / ls                 查看题库列表
+    cd [题库编号]              切换或离开当前题库
     show [题库编号]            查看题库及题目答题情况
     answer <题库编号> <题号>    回答指定题目
     start [题库编号]           回答题库中所有未解决问题
