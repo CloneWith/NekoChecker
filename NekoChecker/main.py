@@ -73,6 +73,11 @@ def main_loop(path: str):
         except KeyboardInterrupt:
             print()
             return False
+        
+        # 输入为空时跳过
+        if user_ans.strip() == "":
+            return True
+        
         # 格式校验
         if getattr(q, "format_re", None):
             import re
