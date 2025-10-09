@@ -91,7 +91,11 @@ def main_loop(path: str):
 
     def start_answering(ps_idx: int):
         ps = get_problem_set(ps_idx)
-        if ps is None or ps.all_solved():
+        if ps is None:
+            return
+        
+        if ps.all_solved():
+            print_and_log("已解决本题组中的所有问题！", "info", __name__)
             return
 
         print_and_log(f"进入题组: {ps.description}", "info", __name__)
@@ -151,6 +155,7 @@ def main_loop(path: str):
             cmd = input(f"{bold(tint('NekoChecker', 'blue'))} [{'/' if current_set is None else current_set.id}] > ").strip()
         except KeyboardInterrupt:
             print()
+            save_config_to_file()
             print_and_log("退出 NekoChecker...", "info", __name__)
             break
 
@@ -222,4 +227,7 @@ def main_loop(path: str):
             continue
         else:
             print_and_log("未知指令。输入 help 查看可用命令。", "info", __name__)
+
+        # Add new line at end of output    
+        print()
     return 0
