@@ -15,7 +15,7 @@ LOGFILE_DEFAULT: str = "checker"
 LOG_HEADER: dict[str, str] = {"error": "Error", "warn": "Warning", "info": "Info", "debug": "Debug"}
 """A dictionary representing all available logging levels (presets)."""
 
-logfile: TextIO
+logfile: TextIO | None = None
 """The log file IO stream."""
 
 
@@ -51,8 +51,12 @@ def cleanup() -> None:
     global initialized
 
     try:
+        # No need to clean up if logger is not initialized
+        if not initialized or logfile is None:
+            return
+
         logfile.close()
-    except NameError or IOError as e:
+    except IOError as e:
         print(e)
         print("Cannot close the log file. Leaving it as-is!")
         pass

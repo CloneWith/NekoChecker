@@ -48,7 +48,7 @@ def print_and_log(msg: str, level: str = "info", module: str = "Generic", nolog:
         else:
             print(f"{SYM[level]}: {msg}")
 
-    if nolog is False:
+    if not nolog:
         try:
             logger_fun = getattr(logger, level)
             logger_fun(msg, module)
@@ -63,7 +63,7 @@ def exit_with_code(code: int):
 
     使程序做好清理工作后带退出码退出。
     """
-    if code is not 0:
+    if code != 0:
         logger.error(f"An error occurred, exiting with code {code}.", __name__)
     else:
         logger.info(f"Program exiting with code {code}.", __name__)
